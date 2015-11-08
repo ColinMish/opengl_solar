@@ -150,7 +150,7 @@ void display()
 
 	// Camera matrix
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(0, 0, 4), // Camera is at (0,0,4), in World Space
+		glm::vec3(0, 3, 8), // Camera is at (0,0,4), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
@@ -165,7 +165,7 @@ void display()
 	model = glm::mat4(1.0f);
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
 	model = glm::translate(model, glm::vec3(-0.5 - 0.5, 0, 0));
-	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));//scale equally in all axis
+	model = glm::scale(model, glm::vec3(scale / 9.f, scale / 9.f, scale / 9.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
@@ -193,11 +193,24 @@ void display()
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, (-angle_y/3), glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
 	/* Draw our sun */
+	drawSphere();
+
+	/* Define the model transformations for our planet2 */
+	model = glm::mat4(1.0f);
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(-0.5, 0, 2));
+	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));//scale equally in all axis
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+	model = glm::rotate(model, (-angle_y/2), glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+
+	/* Draw our planet2 */
 	drawSphere();
 
 	glDisableVertexAttribArray(0);
