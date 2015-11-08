@@ -16,7 +16,7 @@ out vec4 fcolour;
 
 void main()
 {
-	vec3 light_dir = vec3(0, 0, 4.0);			// Define a light direction
+	vec3 light_dir = vec3(0, 1, 1);			// Define a light direction
 
 	vec4 diffuse_colour;
 	vec4 position_h = vec4(position, 1.0);

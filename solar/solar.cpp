@@ -31,7 +31,13 @@ also includes the OpenGL extension initialisation*/
 /* Define buffer object indices */
 GLuint positionBufferObject, colourObject, normalsBufferObject;
 GLuint sphereBufferObject, sphereNormals, sphereColours;
+GLuint ringBufferObject, ringNormals, ringColours;
 GLuint elementbuffer;
+
+struct light {
+	glm::vec3 position;
+	glm::vec3 colour;
+};
 
 GLuint program;		/* Identifier for the shader program */
 GLuint vao;			/* Vertex array (Container) object. This is the index of the VAO that will be the container for
@@ -46,6 +52,8 @@ GLfloat angle_x, angle_inc_x, x, scale, z, y;
 GLfloat angle_y, angle_inc_y, angle_z, angle_inc_z;
 GLuint drawmode;			// Defines drawing mode of sphere as points, lines or filled polygons
 GLuint numLats, numLongs;	//Define the resolution of the sun object
+GLuint numRingVertices;
+light lightSource;
 
 /* Uniforms*/
 GLuint modelID, viewID, projectionID;
@@ -77,8 +85,12 @@ void init(GLWrapper *glw)
 	scale = 1.f;
 	aspect_ratio = 1024.f / 768.f;	// Initial aspect ratio from window size (variables would be better!)
 	colourmode = 0;
-	numLats = 10;		// Number of latitudes in our sphere
-	numLongs = 10;		// Number of longitudes in our sphere
+	numLats = 16;		// Number of latitudes in our sphere
+	numLongs = 16;		// Number of longitudes in our sphere
+
+	// Define lighting
+	lightSource.position = glm::vec3(0, 0, 0);
+	lightSource.colour = glm::vec3(1, 1, 1); //white light
 
 	// Generate index (name) for one vertex array object
 	glGenVertexArrays(1, &vao);
@@ -161,10 +173,11 @@ void display()
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &View[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &Projection[0][0]);
 
-	/* Define the model transformations for our planet */
+	/* Define the model transformations for our earth */
+	
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
-	model = glm::translate(model, glm::vec3(-0.5 - 0.5, 0, 0));
+	model = glm::rotate(model, -angle_y/2, glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(-1.4, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 9.f, scale / 9.f, scale / 9.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
@@ -174,13 +187,37 @@ void display()
 	/* Draw our planet */
 	drawSphere();
 
+	/* Define the model transformations for mercury */
+	model = glm::mat4(1.0f);
+	model = glm::rotate(model, -angle_y/1.025f, glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(-0.5, 0, 0));
+	model = glm::scale(model, glm::vec3(scale / 22.f, scale / 22.f, scale / 22.f));
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+
+	drawSphere();
+
+	/* Define the model transformations for venus */
+	model = glm::mat4(1.0f);
+	model = glm::rotate(model, (-angle_y / 1.8f), glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(-0.8, 0, 0));
+	model = glm::scale(model, glm::vec3(scale / 10.f, scale / 10.f, scale / 10.f));
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+
+	drawSphere();
+
 	/* Define the model transformations for our moon */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Rotate it again around the sun so it appears to follow the planet
-	model = glm::translate(model, glm::vec3(-0.5 - 0.5, 0, 0)); // Third move it out by the same distance as the planet was moved
+	model = glm::rotate(model, -angle_y/2, glm::vec3(0, 1, 0)); // Rotate it again around the sun so it appears to follow the planet
+	model = glm::translate(model, glm::vec3(-1.4, 0, 0)); // Third move it out by the same distance as the planet was moved
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Second rotate the moon around the origin
 	model = glm::translate(model, glm::vec3(-0.3, 0, 0)); // First move the moon out by its distance from the planet
-	model = glm::scale(model, glm::vec3(scale / 22.f, scale / 22.f, scale / 22.f));//scale equally in all axis
+	model = glm::scale(model, glm::vec3(scale / 25.f, scale / 25.f, scale / 25.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
@@ -200,17 +237,16 @@ void display()
 	/* Draw our sun */
 	drawSphere();
 
-	/* Define the model transformations for our planet2 */
+	/* Define the model transformations for our mars */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, (-angle_y/5), glm::vec3(0.3, 1, 0));
 	model = glm::translate(model, glm::vec3(-0.5, 0, 2));
-	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));//scale equally in all axis
-	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, (-angle_y/2), glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
-	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
+	model = glm::rotate(model, (-angle_y/2), glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
-	/* Draw our planet2 */
 	drawSphere();
 
 	glDisableVertexAttribArray(0);
