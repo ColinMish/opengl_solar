@@ -83,11 +83,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="planet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="planet.cpp" />
     <ClCompile Include="solar.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="wrapper_glfw.cpp" />

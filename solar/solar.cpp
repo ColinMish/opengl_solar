@@ -45,14 +45,14 @@ GLuint colourmode;	/* Index of a uniform to switch the colour mode in the vertex
 GLfloat angle_x, angle_inc_x, x, scale, z, y;
 GLfloat angle_y, angle_inc_y, angle_z, angle_inc_z;
 GLuint drawmode;			// Defines drawing mode of sphere as points, lines or filled polygons
-GLuint numlats, numlongs;	//Define the resolution of the sphere object
+GLuint numLats, numLongs;	//Define the resolution of the sun object
 
 /* Uniforms*/
 GLuint modelID, viewID, projectionID;
 GLuint colourmodeID;
 
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
-GLuint numspherevertices;
+GLuint numSphereVertices;
 
 /* Function prototypes */
 /* Note that a better design would be to make a sphere class. I've suggested that as one of the
@@ -71,154 +71,21 @@ void init(GLWrapper *glw)
 	x = 0.05f;
 	y = 0;
 	z = 0;
-	angle_x = angle_y = angle_z = 0;
+	angle_x = angle_z = 0;
+	angle_y = 1;
 	angle_inc_x = angle_inc_y = angle_inc_z = 0;
 	scale = 1.f;
 	aspect_ratio = 1024.f / 768.f;	// Initial aspect ratio from window size (variables would be better!)
 	colourmode = 0;
-	numlats = 20;		// Number of latitudes in our sphere
-	numlongs = 20;		// Number of longitudes in our sphere
+	numLats = 10;		// Number of latitudes in our sphere
+	numLongs = 10;		// Number of longitudes in our sphere
 
 	// Generate index (name) for one vertex array object
 	glGenVertexArrays(1, &vao);
-
 	// Create the vertex array object and make it current
 	glBindVertexArray(vao);
-
-	/* Define vertices for a cube in 12 triangles */
-	GLfloat vertexPositions[] =
-	{
-		-0.25f, 0.25f, -0.25f,
-		-0.25f, -0.25f, -0.25f,
-		0.25f, -0.25f, -0.25f,
-
-		0.25f, -0.25f, -0.25f,
-		0.25f, 0.25f, -0.25f,
-		-0.25f, 0.25f, -0.25f,
-
-		0.25f, -0.25f, -0.25f,
-		0.25f, -0.25f, 0.25f,
-		0.25f, 0.25f, -0.25f,
-
-		0.25f, -0.25f, 0.25f,
-		0.25f, 0.25f, 0.25f,
-		0.25f, 0.25f, -0.25f,
-
-		0.25f, -0.25f, 0.25f,
-		-0.25f, -0.25f, 0.25f,
-		0.25f, 0.25f, 0.25f,
-
-		-0.25f, -0.25f, 0.25f,
-		-0.25f, 0.25f, 0.25f,
-		0.25f, 0.25f, 0.25f,
-
-		-0.25f, -0.25f, 0.25f,
-		-0.25f, -0.25f, -0.25f,
-		-0.25f, 0.25f, 0.25f,
-
-		-0.25f, -0.25f, -0.25f,
-		-0.25f, 0.25f, -0.25f,
-		-0.25f, 0.25f, 0.25f,
-
-		-0.25f, -0.25f, 0.25f,
-		0.25f, -0.25f, 0.25f,
-		0.25f, -0.25f, -0.25f,
-
-		0.25f, -0.25f, -0.25f,
-		-0.25f, -0.25f, -0.25f,
-		-0.25f, -0.25f, 0.25f,
-
-		-0.25f, 0.25f, -0.25f,
-		0.25f, 0.25f, -0.25f,
-		0.25f, 0.25f, 0.25f,
-
-		0.25f, 0.25f, 0.25f,
-		-0.25f, 0.25f, 0.25f,
-		-0.25f, 0.25f, -0.25f,
-	};
-
-	/* Manually specified colours for our cube */
-	float vertexColours[] = {
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-	};
-
-	/* Manually specified normals for our cube */
-	GLfloat normals[] =
-	{
-		0, 0, -1.f, 0, 0, -1.f, 0, 0, -1.f,
-		0, 0, -1.f, 0, 0, -1.f, 0, 0, -1.f,
-		1.f, 0, 0, 1.f, 0, 0, 1.f, 0, 0,
-		1.f, 0, 0, 1.f, 0, 0, 1.f, 0, 0,
-		0, 0, 1.f, 0, 0, 1.f, 0, 0, 1.f,
-		0, 0, 1.f, 0, 0, 1.f, 0, 0, 1.f,
-		-1.f, 0, 0, -1.f, 0, 0, -1.f, 0, 0,
-		-1.f, 0, 0, -1.f, 0, 0, -1.f, 0, 0,
-		0, -1.f, 0, 0, -1.f, 0, 0, -1.f, 0,
-		0, -1.f, 0, 0, -1.f, 0, 0, -1.f, 0,
-		0, 1.f, 0, 0, 1.f, 0, 0, 1.f, 0,
-		0, 1.f, 0, 0, 1.f, 0, 0, 1.f, 0,
-	};
-
-	/* Create the vertex buffer for the cube */
-	glGenBuffers(1, &positionBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	/* Create the colours buffer for the cube */
-	glGenBuffers(1, &colourObject);
-	glBindBuffer(GL_ARRAY_BUFFER, colourObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexColours), vertexColours, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	/* Create the normals  buffer for the cube */
-	glGenBuffers(1, &normalsBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, normalsBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, 36 * sizeof(glm::vec3), normals, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	/* create the sphere object */
-	numspherevertices = makeSphereVBO(numlats, numlongs);
+	numSphereVertices = makeSphereVBO(numLats, numLongs);
 
 	/* Load and build the vertex and fragment shaders */
 	try
@@ -294,19 +161,43 @@ void display()
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &View[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &Projection[0][0]);
 
-	/* Draw our cube*/
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-
-	/* Define the model transformations for our sphere */
+	/* Define the model transformations for our planet */
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-x - 0.5, 0, 0));
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(-0.5 - 0.5, 0, 0));
+	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));//scale equally in all axis
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+
+	/* Draw our planet */
+	drawSphere();
+
+	/* Define the model transformations for our moon */
+	model = glm::mat4(1.0f);
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Rotate it again around the sun so it appears to follow the planet
+	model = glm::translate(model, glm::vec3(-0.5 - 0.5, 0, 0)); // Third move it out by the same distance as the planet was moved
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Second rotate the moon around the origin
+	model = glm::translate(model, glm::vec3(-0.3, 0, 0)); // First move the moon out by its distance from the planet
+	model = glm::scale(model, glm::vec3(scale / 22.f, scale / 22.f, scale / 22.f));//scale equally in all axis
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+
+	/* Draw our moon */
+	drawSphere();
+
+	/* Define the model transformations for our sun */
+	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
-	/* Draw our sphere */
+	/* Draw our sun */
 	drawSphere();
 
 	glDisableVertexAttribArray(0);
@@ -316,6 +207,7 @@ void display()
 	angle_x += angle_inc_x;
 	angle_y += angle_inc_y;
 	angle_z += angle_inc_z;
+	
 }
 
 /* Called whenever the window is resized. The new window size is given, in pixels. */
@@ -334,10 +226,14 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
+	/*
 	if (key == 'Q') angle_inc_x -= 0.05f;
 	if (key == 'W') angle_inc_x += 0.05f;
+	*/
 	if (key == 'E') angle_inc_y -= 0.05f;
 	if (key == 'R') angle_inc_y += 0.05f;
+	
+	/*
 	if (key == 'T') angle_inc_z -= 0.05f;
 	if (key == 'Y') angle_inc_z += 0.05f;
 	if (key == 'A') scale -= 0.02f;
@@ -348,6 +244,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == 'V') y += 0.05f;
 	if (key == 'B') z -= 0.05f;
 	if (key == 'N') z += 0.05f;
+	*/
 
 	if (key == 'M' && action != GLFW_PRESS)
 	{
@@ -389,7 +286,6 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-/* Make a sphere from two triangle fans (one at each pole) and triangle strips along latitudes */
 /* Make a sphere from two triangle fans (one at each pole) and triangle strips along latitudes */
 /* This version uses indexed vertex buffers for both the fans at the poles and the latitude strips */
 /* Please not that a better structure would be to make a seperate sphere class and create an instance
@@ -545,7 +441,7 @@ void drawSphere()
 
 	if (drawmode == 2)
 	{
-		glDrawArrays(GL_POINTS, 0, numspherevertices);
+		glDrawArrays(GL_POINTS, 0, numSphereVertices);
 	}
 	else
 	{
@@ -553,22 +449,22 @@ void drawSphere()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
 
 		/* Draw the north pole regions as a triangle  */
-		glDrawElements(GL_TRIANGLE_FAN, numlongs + 2, GL_UNSIGNED_INT, (GLvoid*)(0));
+		glDrawElements(GL_TRIANGLE_FAN, numLongs + 2, GL_UNSIGNED_INT, (GLvoid*)(0));
 
 		/* Calculate offsets into the indexed array. Note that we multiply offsets by 4
 		because it is a memory offset the indices are type GLuint which is 4-bytes */
-		GLuint lat_offset_jump = (numlongs * 2) + 2;
-		GLuint lat_offset_start = numlongs + 2;
+		GLuint lat_offset_jump = (numLongs * 2) + 2;
+		GLuint lat_offset_start = numLongs + 2;
 		GLuint lat_offset_current = lat_offset_start * 4;
 
 		/* Draw the triangle strips of latitudes */
-		for (i = 0; i < numlats - 2; i++)
+		for (i = 0; i < numLats - 2; i++)
 		{
-			glDrawElements(GL_TRIANGLE_STRIP, numlongs * 2 + 2, GL_UNSIGNED_INT, (GLvoid*)(lat_offset_current));
+			glDrawElements(GL_TRIANGLE_STRIP, numLongs * 2 + 2, GL_UNSIGNED_INT, (GLvoid*)(lat_offset_current));
 			lat_offset_current += (lat_offset_jump * 4);
 		}
 		/* Draw the south pole as a triangle fan */
-		glDrawElements(GL_TRIANGLE_FAN, numlongs + 2, GL_UNSIGNED_INT, (GLvoid*)(lat_offset_current));
+		glDrawElements(GL_TRIANGLE_FAN, numLongs + 2, GL_UNSIGNED_INT, (GLvoid*)(lat_offset_current));
 	}
 }
 
