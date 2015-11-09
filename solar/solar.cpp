@@ -176,11 +176,11 @@ void display()
 	/* Define the model transformations for our earth */
 	
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y/2, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
 	model = glm::translate(model, glm::vec3(-1.4, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 9.f, scale / 9.f, scale / 9.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_y*365, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -189,11 +189,11 @@ void display()
 
 	/* Define the model transformations for mercury */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y/1.025f, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*4.14f, glm::vec3(0, 1, 0));
 	model = glm::translate(model, glm::vec3(-0.5, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 22.f, scale / 22.f, scale / 22.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*365*6.18f, glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -201,11 +201,11 @@ void display()
 
 	/* Define the model transformations for venus */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, (-angle_y / 1.8f), glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*1.62f, glm::vec3(0, 1, 0));
 	model = glm::translate(model, glm::vec3(-0.8, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 10.f, scale / 10.f, scale / 10.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*365*1.5f, glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -213,13 +213,13 @@ void display()
 
 	/* Define the model transformations for our moon */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, -angle_y/2, glm::vec3(0, 1, 0)); // Rotate it again around the sun so it appears to follow the planet
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Rotate it again around the sun so it appears to follow the planet
 	model = glm::translate(model, glm::vec3(-1.4, 0, 0)); // Third move it out by the same distance as the planet was moved
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); // Second rotate the moon around the origin
+	model = glm::rotate(model, -angle_y*13.36f, glm::vec3(0, 1, 0)); // Second rotate the moon around the origin
 	model = glm::translate(model, glm::vec3(-0.3, 0, 0)); // First move the moon out by its distance from the planet
 	model = glm::scale(model, glm::vec3(scale / 25.f, scale / 25.f, scale / 25.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_y/27.3f, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -230,7 +230,7 @@ void display()
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, (-angle_y/3), glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_y*365*14.6f, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -243,7 +243,7 @@ void display()
 	model = glm::translate(model, glm::vec3(-0.5, 0, 2));
 	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, (-angle_y/2), glm::vec3(0, 1, 0));
+	model = glm::rotate(model, (-angle_y*365*1.03f), glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -279,8 +279,8 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == 'Q') angle_inc_x -= 0.05f;
 	if (key == 'W') angle_inc_x += 0.05f;
 	*/
-	if (key == 'E') angle_inc_y -= 0.05f;
-	if (key == 'R') angle_inc_y += 0.05f;
+	if (key == 'E') angle_inc_y -= 0.001f;
+	if (key == 'R') angle_inc_y += 0.001f;
 	
 	/*
 	if (key == 'T') angle_inc_z -= 0.05f;
