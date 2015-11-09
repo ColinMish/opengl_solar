@@ -193,7 +193,7 @@ void display()
 	model = glm::translate(model, glm::vec3(-0.5, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 22.f, scale / 22.f, scale / 22.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, -angle_y*365*6.18f, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*365/6.18f, glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -205,7 +205,7 @@ void display()
 	model = glm::translate(model, glm::vec3(-0.8, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 10.f, scale / 10.f, scale / 10.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, -angle_y*365*1.5f, glm::vec3(0, 1, 0));
+	model = glm::rotate(model, -angle_y*365/1.5f, glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -230,7 +230,7 @@ void display()
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-	model = glm::rotate(model, -angle_y*365*14.6f, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_y*365/14.6f, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -239,11 +239,11 @@ void display()
 
 	/* Define the model transformations for our mars */
 	model = glm::mat4(1.0f);
-	model = glm::rotate(model, (-angle_y/5), glm::vec3(0.3, 1, 0));
-	model = glm::translate(model, glm::vec3(-0.5, 0, 2));
+	model = glm::rotate(model, (-angle_y/5), glm::vec3(0.1, 1, 0)); //Skewed orbit to make it a bit more interesting
+	model = glm::translate(model, glm::vec3(-2.5, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 7.f, scale / 7.f, scale / 7.f));
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0));
-	model = glm::rotate(model, (-angle_y*365*1.03f), glm::vec3(0, 1, 0));
+	model = glm::rotate(model, (-angle_y*365/1.03f), glm::vec3(0, 1, 0));
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1));
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
@@ -279,8 +279,10 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == 'Q') angle_inc_x -= 0.05f;
 	if (key == 'W') angle_inc_x += 0.05f;
 	*/
-	if (key == 'E') angle_inc_y -= 0.001f;
-	if (key == 'R') angle_inc_y += 0.001f;
+	if (key == 'E') angle_inc_y -= 0.0001f;
+	if (key == 'R') angle_inc_y += 0.0001f;
+	if (key == 'D') angle_inc_y -= 0.001f;
+	if (key == 'F') angle_inc_y += 0.001f;
 	
 	/*
 	if (key == 'T') angle_inc_z -= 0.05f;
